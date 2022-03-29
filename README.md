@@ -2,9 +2,18 @@
 
 Here is description of Matlab code (located in the file MatlabCodeAlltimes.zip)
 
-used for generation of data for C++/PETSc AFEM code located in
+used for generation of data for C++/PETSc code located in  private directory
 
 https://github.com/ProjectWaves24/MESH
+
+
+The code was used for computations of the paper
+
+L. Beilina, M. G. Aram, E. M. Karchevskii,
+An adaptive finite element method for solving 3D electromagnetic volume integral equation with applications in microwave thermometry,
+Journal of Computational Physics, V. 459, 2022, 111122, ISSN 0021-9991,
+https://doi.org/10.1016/j.jcp.2022.111122.
+
 
 as well as to obtain least squares reconstructions reported in the paper
 
