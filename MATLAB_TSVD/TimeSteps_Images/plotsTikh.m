@@ -1,0 +1,105 @@
+
+close all
+%set(0,'DefaultAxesFontName', 'Times New Roman')
+set(0,'DefaultAxesFontSize', 16)
+
+% Change default text fonts.
+%set(0,'DefaultTextFontname', 'Times New Roman')
+set(0,'DefaultTextFontSize', 16)
+%Volume = dX*dY*dZ;
+%%
+% Requires 
+% Precomputed_Inverse_Scattering_Solution_M.m
+%   - UU, SS, VV = SVD(G)
+% ImageWrapper_TimeSeries.m
+%   - DeltaS
+%   - NumAnt
+t = 4;
+d1 = reshape(DeltaS(:,:,1),NumAnt^2,1);
+d2 = reshape(DeltaS(:,:,2),NumAnt^2,1);
+d3 = reshape(DeltaS(:,:,3),NumAnt^2,1);
+d4 = reshape(DeltaS(:,:,4),NumAnt^2,1);
+d5 = reshape(DeltaS(:,:,5),NumAnt^2,1);
+
+%%   
+
+thr = logspace(-14,3,30);
+%thr = [0,thr];
+obj = zeros(length(thr),1);
+
+timemoments = 5;
+
+rhs = zeros(5,length(d1));
+Tikhfunc  = zeros(5, length(thr));
+
+rhs(1,:) =  d1;
+rhs(2,:) =  d2;
+rhs(3,:) =  d3;
+rhs(4,:) =  d4;
+rhs(5,:) =  d5;
+
+figure
+
+for k = 1:5
+
+	d =  rhs(k,:)';
+
+
+for i = 1:length(thr)
+ %   disp(i)
+    M = VV*((SS^2 + thr(i)*eye(size(SS,2)))\SS*UU'); %eq(19) Thikhonov parameter needs to be determined properly.
+    S = Gbig*M;
+  %  obj(i,1) = sum(abs(S*d5-d5).^2,'all');
+obj(i,1) = sum(abs(S*d - d).^2,'all');
+   % obj(i,2) =  thr(i)*sum(abs(M*d5).^2,'all');
+   % obj(i,3) = obj(i,1)+obj(i,2);
+    obj(i,3) = obj(i,1);
+    obj(i,4) = thr(i);
+	       
+end
+
+Tikhfunc(k,:) = obj(:,1);
+ subplot(1,5,k)
+ 
+    loglog(thr,Tikhfunc(k,:),'LineWidth',3)
+
+  
+	       end
+  
+%%
+clf
+figure
+%loglog(thr,obj(:,1),'LineWidth',3)
+
+	       loglog(thr,Tikhfunc(k,:),'LineWidth',3)
+	       
+[~,i1] = min(abs(thr-7e-5));
+[~,i2] = min(abs(thr-8e-8));
+[~,i3] = min(abs(thr-3e-10));
+
+hold on
+%semilogx(thr,obj(:,3),'LineWidth',3)
+
+plot([7e-5,7e-5+1e-11],ylim(),'k')
+plot([3e-7,3e-7+1e-11],ylim(),'k')
+plot([1e-9,1e-9+1e-11],ylim(),'k')
+hold off
+title('Tikhonov Functinal')
+xlabel('\lambda')
+  ylabel('Residual  R(m,d) = ||Gm-d||_2^2 ')
+%legend('||Gm-d||_2^2','||Gm-d||_2^2+\lambda||m||_2^2','Location','southeast')
+
+
+  figure
+  
+loglog(thr,obj(:,2),'LineWidth',3)
+hold on
+plot([7e-5,7e-5+1e-11],ylim(),'k')
+plot([3e-7,3e-7+1e-11],ylim(),'k')
+plot([1e-9,1e-9+1e-11],ylim(),'k')
+
+title('Regularization Term')
+xlabel('\lambda')
+legend('\lambda||m||_2^2')
+sgtitle('Tikhonov regularisation')
+

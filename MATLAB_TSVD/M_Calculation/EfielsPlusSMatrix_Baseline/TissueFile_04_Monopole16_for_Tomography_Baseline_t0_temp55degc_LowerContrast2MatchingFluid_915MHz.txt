@@ -1,0 +1,4 @@
+//04_Monopole16_for_Tomography_Baseline_t0_temp55degc_LowerContrast2MatchingFluid	915MHz				
+//TissueName(CST)  	Index	epsr	mur	sigma	Density[kg/m3]
+CouplingFluid   	1	24.5	1	0.46	850
+HeatedWater   	2	26	1	0.12	1000

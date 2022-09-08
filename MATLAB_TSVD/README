@@ -1,0 +1,67 @@
+To be able test Truncated SVD, perform following steps:
+
+Step 1. Run first Matlab program
+
+Precomputed_Inverse_Scattering_Solution_M.m
+
+which uses conventional SVD in order to generate data an matrices U, Sigma, V.
+
+ The program is located  in the directory
+
+M_Calculation/
+
+
+Step 2*. To  obtaining reconstructions with reg. parameter 1 only and usual SVD
+ - use the program
+
+ImageWraper_TimeSeries.m
+
+located in 
+
+TimeSteps_Images/
+
+This program is used in the paper
+M. G. Aram, L. Beilina, H. Dobsicek Trefna, , Microwave Thermometry with Potential Application in Non-invasive Monitoring of Hyperthermia, Journal of Inverse and Ill-posed problems, 2020
+
+
+Step 3. To obtain reconstructions using TSVD (truncated SVD) use the following programs:
+
+a) plotsTikhv2.m
+
+This program generates images of residuals for d_i, i=1,2,3,4,5, and reg.terms depending on the reg.parameter taken on the interval [10^{-14}, 10^3]
+
+The program
+plotsTSVDResiduals.m
+
+computes residuals for d_i, i=1,2,3,4,5, and reg.terms depending on the reg.parameter taken on the interval [10^{-14}, 10^3] for TSVD with k=9 in TSVD.
+
+b)  plotsTSVD.m ---> bara for lambda=0
+
+This program generates images of the residual for rhs  d_i, i=1,2,3,4,5, depending on the truncated value in TSVD. In this program the reg.parameter lambda=0
+
+c) plotsTSVDlambda.m
+
+Similar program to plotsTSVD.m  which produces plots for residual,
+Tikhonov's functional and reg.term for different truncated values k in TSVD
+and at different time moments d_i, i=1,2,3,4,5.
+
+In this program one can choose value of reg.parameter lambda and compute residual. We take k=136 as final truncated value here. 
+
+c) plots.m, plotsv2.m
+
+located in
+
+TimeSteps_Images
+
+These programs generate different images and are
+produced by Leon and Daniel. Can be used for producing of figures.
+
+d) Image_TSVD.m
+
+This program computes reconstructions using TSVD and different values of reg.parameter lambda and truncated values of k. Use the results of the program
+plotsTSVDlambda.m  to analyze which one reconstruction is the best one.
+
+e)  tsvd_analysis.m
+
+This program computes  error estimates obtained in the Theorem of the paper.
+Can be used for analysis of choosing optimal lambda for reconstructions. 

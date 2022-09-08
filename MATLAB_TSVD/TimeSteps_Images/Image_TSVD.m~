@@ -1,0 +1,81 @@
+%clear all
+close all
+%clc   
+
+%% Read the necessary data
+S0 = load('S_Matrix_16Monopole_BaseLine.mat');          %Prob data for the baseline scenario
+FieldNameA = fieldnames(S0);
+SBaseLine = getfield(S0,FieldNameA{1});
+
+SSeries = load('S_Matrix_16Monopole_TimeSeries.mat');   %Prob data set for time steps  
+FieldNameB = fieldnames(SSeries);
+STimeSeries = getfield(SSeries,FieldNameB{1});
+
+PreComputed = load('M_16Ant_40x42x26GeoMatrix_Resolution2mm_SVD_Economy.mat');    %Precomputed solution from M-calculation
+FieldName = fieldnames(PreComputed);
+M = getfield(PreComputed,FieldName{1});
+
+Geometrics = load('../M_Calculation/EfielsPlusSMatrix_Baseline/Geo_04_Monopole16_for_Tomography_Baseline_t0_temp55degc_LowerContrast2MatchingFluid.mat'); %A struct containing {Geo, XX, YY, ZZ}
+Geo = Geometrics.Geo;
+X = Geometrics.XX;
+Y = Geometrics.YY;
+Z = Geometrics.ZZ;
+
+NumAnt = size(SBaseLine,1);
+NumTSteps = size(STimeSeries,3);
+
+%% Differential input for temporal steps
+DeltaS = STimeSeries - repmat(SBaseLine,[1 1 NumTSteps]);       %To be fed as 'd' to the algorithm
+[XM, YM, ZM] = meshgrid(X, Y, Z);
+Xcenter = 0.02;     %To draw a dashed line over the target area
+Ycenter = -0.01;    %To draw a dashed line over the target area
+
+
+%% Conversion
+DeltaOs = cell(1,NumTSteps);
+for tn = 1:NumTSteps
+    d = reshape(DeltaS(:,:,tn),NumAnt^2,1);
+
+
+% choice of the reg.parameter
+lambda=   SS(256,256);
+
+  lambda=10^-11;
+mTildaArray = reshape(compute_inverse(lambda,136,UU,SS,VV)*d,size(Geo));
+
+
+%example without regularization and all 256 components of the matrix:
+% we can't get reconstruction for usual SVD and lambda=0
+%mTildaArray = reshape(compute_inverse(0,256,UU,SS,VV)*d,size(Geo));
+
+  
+
+    mTilda = reshape(abs(mTildaArray),size(Geo));
+    DeltaOs{1,tn} = mTilda;
+    figure
+    slice(XM,YM,ZM,DeltaOs{1,tn},X(36),Y(21),Z(7));
+    colormap jet
+  %  caxis([0 0.8e-7])
+    colorbar
+    axis image
+    xlabel('x (m)')   
+    ylabel('y (m)')
+    zlabel('z (m)')
+    shading interp
+    title(['t = ' num2str(tn) 'min'])
+    figure(10)
+ %   subplot(1,5,tn)
+       subplot(2,3,tn) 
+    pcolor(X,Y,mTilda(:,:,7))
+    shading interp
+    colormap jet
+   % caxis([0 0.8e-7])
+    colorbar
+    hold on
+    h = ezplot(@(x,y) (x-Xcenter).^2+(y-Ycenter).^2 - 0.015^2,[min(X), max(X), min(Y), max(Y)]);
+    set(h,'color','k','LineStyle','--','LineWidth',1.5)
+    hold off
+    title(['t = ' num2str(tn) 'min'])
+    display(['t = ' num2str(tn) 'min'])
+    norm(d,2)
+end

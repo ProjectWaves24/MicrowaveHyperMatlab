@@ -1,0 +1,11 @@
+# run first the program Precomputed_Inverse_Scattering_SOlution_M.m
+
+# x-axis to plot singular varlues
+
+x = linspace(0, 255, 256);
+
+# plotting singular values
+plot(x', diag(SS));
+
+
+legend('singular values  of \Sigma')
