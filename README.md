@@ -1,6 +1,9 @@
 # MicrowaveHyperMatlab
 
-Here is description of Matlab code (located in the file MatlabCodeAlltimes.zip)
+ Matlab code (located in  zip-files) is used for real-time temperature monitoring in the process
+ of microwave thermometry.
+ 
+ The code in 
 
 used for generation of data for C++/PETSc code located in  private directory
 
